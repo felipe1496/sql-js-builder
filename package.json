@@ -1,0 +1,26 @@
+{
+  "name": "@gentlewalrus/searchjs",
+  "version": "0.0.1",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "node": ">=18",
+  "scripts": {
+    "build": "tsup",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "felipe1496 ",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.3.0",
+    "jest": "^30.0.5",
+    "ts-jest": "^29.4.1",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2"
+  }
+}
