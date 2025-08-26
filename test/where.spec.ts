@@ -303,5 +303,12 @@ describe("Tests where", () => {
         where().and("field", "eq", { object: "not_allowed" }).build();
       }).toThrow(Error);
     });
+
+    test("Tests where from str value", () => {
+      const { sql, values } = where("name eq 'john' and age gte 25").build();
+
+      expect(sql).toBe('1 = 1 AND "name" = ? AND "age" >= ?');
+      expect(values).toEqual(["john", 25]);
+    });
   });
 });
