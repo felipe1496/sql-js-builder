@@ -59,6 +59,12 @@ function validateInputOperatorToValue(op: Operator, value: any) {
         throw new Error(`Value must be string or number for ${op} operator`);
       }
       break;
+    case "is":
+    case "isn":
+      if (typeof value !== "boolean" && value !== null) {
+        throw new Error(`Value must be boolean or null for ${op} operator`);
+      }
+      break;
     default:
       break;
   }
