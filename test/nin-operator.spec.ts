@@ -73,4 +73,14 @@ describe("Tests not in operator", () => {
   test("Error on pass null as value", () => {
     expect(() => where().and("age", "nin", null).build()).toThrow(Error);
   });
+
+  test("Error on pass object as value", () => {
+    expect(() =>
+      where()
+        .and("age", "nin", {
+          some: "value",
+        })
+        .build()
+    ).toThrow(Error);
+  });
 });

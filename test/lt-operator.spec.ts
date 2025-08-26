@@ -57,6 +57,16 @@ describe("Tests lt operator", () => {
     ).toThrow(Error);
   });
 
+  test("Error on pass object as value", () => {
+    expect(() =>
+      where()
+        .and("age", "lt", {
+          some: "value",
+        })
+        .build()
+    ).toThrow(Error);
+  });
+
   test("On number value", () => {
     const { sql, values } = where().and("age", "lt", 3).build();
 

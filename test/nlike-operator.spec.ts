@@ -53,14 +53,24 @@ describe("Tests nlike operator", () => {
   });
 
   test("Error on pass number as value", () => {
-    expect(() => where().and("age", "in", 23).build()).toThrow(Error);
+    expect(() => where().and("age", "sw", 23).build()).toThrow(Error);
   });
 
   test("Error on pass true as value", () => {
-    expect(() => where().and("age", "in", true).build()).toThrow(Error);
+    expect(() => where().and("age", "sw", true).build()).toThrow(Error);
   });
 
   test("Error on pass null as value", () => {
-    expect(() => where().and("age", "in", null).build()).toThrow(Error);
+    expect(() => where().and("age", "sw", null).build()).toThrow(Error);
+  });
+
+  test("Error on pass object as value", () => {
+    expect(() =>
+      where()
+        .and("age", "sw", {
+          some: "value",
+        })
+        .build()
+    ).toThrow(Error);
   });
 });

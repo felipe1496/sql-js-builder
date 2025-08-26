@@ -1,73 +1,73 @@
 import { where } from "../src";
 
-describe("Tests like operator", () => {
-  test("Regular like value", () => {
-    const { sql, values } = where().and("name", "like", "john").build();
+describe("Tests ew operator", () => {
+  test("Regular ew value", () => {
+    const { sql, values } = where().and("name", "ew", "john").build();
 
     expect(sql).toBe(`1 = 1 AND upper("name") LIKE upper(?)`);
-    expect(values).toEqual(["%john%"]);
+    expect(values).toEqual(["%john"]);
   });
 
-  test("Multiple like condition on the same condition", () => {
+  test("Multiple ew condition on the same condition", () => {
     const { sql, values } = where()
-      .and("name", "like", "john")
-      .and("email", "like", "john@d")
+      .and("name", "ew", "john")
+      .and("email", "ew", "john@d")
       .build();
 
     expect(sql).toBe(
       '1 = 1 AND upper("name") LIKE upper(?) AND upper("email") LIKE upper(?)'
     );
-    expect(values).toEqual(["%john%", "%john@d%"]);
+    expect(values).toEqual(["%john", "%john@d"]);
   });
 
-  test("Test like or conditions", () => {
+  test("Test ew or conditions", () => {
     const { sql, values } = where()
       .or([
-        ["name", "like", "john"],
-        ["name", "like", "doe"],
+        ["name", "ew", "john"],
+        ["name", "ew", "doe"],
       ])
       .build();
     expect(sql).toBe(
       '1 = 1 AND (upper("name") LIKE upper(?) OR upper("name") LIKE upper(?))'
     );
-    expect(values).toEqual(["%john%", "%doe%"]);
+    expect(values).toEqual(["%john", "%doe"]);
   });
 
   test("Tests or and and eq conditions on the same search", () => {
     const { sql, values } = where()
-      .and("age", "like", "32")
+      .and("age", "ew", "32")
       .or([
-        ["name", "like", "john"],
-        ["name", "like", "doe"],
+        ["name", "ew", "john"],
+        ["name", "ew", "doe"],
       ])
-      .and("email", "like", "john@doe")
+      .and("email", "ew", "john@doe")
       .build();
     expect(sql).toBe(
       '1 = 1 AND upper("age") LIKE upper(?) AND (upper("name") LIKE upper(?) OR upper("name") LIKE upper(?)) AND upper("email") LIKE upper(?)'
     );
-    expect(values).toEqual(["%32%", "%john%", "%doe%", "%john@doe%"]);
+    expect(values).toEqual(["%32", "%john", "%doe", "%john@doe"]);
   });
 
   test("Error on pass array as value", () => {
-    expect(() => where().and("age", "like", ["23"]).build()).toThrow(Error);
+    expect(() => where().and("age", "ew", ["23"]).build()).toThrow(Error);
   });
 
   test("Error on pass number as value", () => {
-    expect(() => where().and("age", "like", 23).build()).toThrow(Error);
+    expect(() => where().and("age", "ew", 23).build()).toThrow(Error);
   });
 
   test("Error on pass true as value", () => {
-    expect(() => where().and("age", "like", true).build()).toThrow(Error);
+    expect(() => where().and("age", "ew", true).build()).toThrow(Error);
   });
 
   test("Error on pass null as value", () => {
-    expect(() => where().and("age", "like", null).build()).toThrow(Error);
+    expect(() => where().and("age", "ew", null).build()).toThrow(Error);
   });
 
   test("Error on pass object as value", () => {
     expect(() =>
       where()
-        .and("age", "like", {
+        .and("age", "ew", {
           some: "value",
         })
         .build()
