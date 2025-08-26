@@ -12,6 +12,6 @@ With that in mind, SQL JS Builder was created as a lightweight utility package t
 
 # Caveats
 
-## Placeholder
+### Placeholders
 
 # Documentation
