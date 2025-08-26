@@ -1,7 +1,11 @@
 import { Condition, createCondition, parseConditionSQL } from "./condition";
+import { parseStringToWhere } from "./parse-string-to-where";
 import { Operator, Where } from "./types";
 
-export function where(): Where {
+export function where(str?: string): Where {
+  if (str) {
+    return parseStringToWhere(str);
+  }
   const conds: (Condition | Condition[])[] = [];
 
   function and(field: string, operator: Operator, value: any) {
