@@ -42,6 +42,7 @@ function validateInputOperatorToValue(op: Operator, value: any) {
       }
       break;
     case "like":
+    case "nlike":
     case "sw":
     case "ew":
       if (typeof value !== "string") {
@@ -66,16 +67,42 @@ function validateInputOperatorToValue(op: Operator, value: any) {
 function getSqlPlaceholder(op: Operator, value: any) {
   switch (op) {
     case "like":
-      return `%?%`;
+    case "nlike":
     case "sw":
-      return `?%`;
     case "ew":
-      return `%?`;
+      return "upper(?)";
     case "in":
     case "nin":
       return `(${value.map(() => "?").join(", ")})`;
     default:
       return "?";
+  }
+}
+
+function getField(field: string, op: Operator) {
+  switch (op) {
+    case "like":
+    case "nlike":
+    case "sw":
+    case "ew":
+      return `upper("${field}")`;
+
+    default:
+      return `"${field}"`;
+  }
+}
+
+function getValue(value: any, op: Operator) {
+  switch (op) {
+    case "like":
+    case "nlike":
+      return `%${value}%`;
+    case "sw":
+      return `${value}%`;
+    case "ew":
+      return `%${value}`;
+    default:
+      return value;
   }
 }
 
@@ -95,12 +122,12 @@ export function createCondition(
 }
 
 export function parseConditionSQL({ field, operator, value }: Condition) {
-  const sql = `"${field}" ${operators[operator]} ${getSqlPlaceholder(
-    operator,
-    value
-  )}`;
+  const sql = `${getField(field, operator)} ${
+    operators[operator]
+  } ${getSqlPlaceholder(operator, value)}`;
+
   return {
     sql,
-    value,
+    value: getValue(value, operator),
   };
 }
