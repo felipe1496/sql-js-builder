@@ -1,15 +1,15 @@
-import { searchjs } from "../src";
+import { where } from "../src";
 
 describe("Tests eq operator", () => {
   test("Regular eq value", () => {
-    const { sql, values } = searchjs().and("name", "eq", "john").build();
+    const { sql, values } = where().and("name", "eq", "john").build();
 
     expect(sql).toBe('1 = 1 AND "name" = ?');
     expect(values).toEqual(["john"]);
   });
 
   test("Multiple eq condition on the same condition", () => {
-    const { sql, values } = searchjs()
+    const { sql, values } = where()
       .and("name", "eq", "john")
       .and("email", "eq", "john@doe.com")
       .and("age", "eq", 23)
@@ -20,7 +20,7 @@ describe("Tests eq operator", () => {
   });
 
   test("Test eq or conditions", () => {
-    const { sql, values } = searchjs()
+    const { sql, values } = where()
       .or([
         ["name", "eq", "john"],
         ["name", "eq", "doe"],
@@ -31,7 +31,7 @@ describe("Tests eq operator", () => {
   });
 
   test("Tests or and and eq conditions on the same search", () => {
-    const { sql, values } = searchjs()
+    const { sql, values } = where()
       .and("age", "eq", 32)
       .or([
         ["name", "eq", "john"],
@@ -47,7 +47,7 @@ describe("Tests eq operator", () => {
 
   test("Error on pass array as value", () => {
     expect(() =>
-      searchjs()
+      where()
         .and("name", "eq", "john")
         .and("email", "eq", "john@doe.com")
         .and("age", "eq", ["23"])
@@ -56,7 +56,7 @@ describe("Tests eq operator", () => {
   });
 
   test("On number value", () => {
-    const { sql, values } = searchjs().and("name", "eq", 3).build();
+    const { sql, values } = where().and("name", "eq", 3).build();
 
     expect(sql).toBe('1 = 1 AND "name" = ?');
     expect(values).toEqual([3]);
@@ -65,14 +65,14 @@ describe("Tests eq operator", () => {
 
 describe("Tests ne operator", () => {
   test("Regular ne value", () => {
-    const { sql, values } = searchjs().and("name", "ne", "john").build();
+    const { sql, values } = where().and("name", "ne", "john").build();
 
     expect(sql).toBe('1 = 1 AND "name" != ?');
     expect(values).toEqual(["john"]);
   });
 
   test("Multiple ne condition on the same condition", () => {
-    const { sql, values } = searchjs()
+    const { sql, values } = where()
       .and("name", "ne", "john")
       .and("email", "ne", "john@doe.com")
       .and("age", "ne", 23)
@@ -83,7 +83,7 @@ describe("Tests ne operator", () => {
   });
 
   test("Test ne or conditions", () => {
-    const { sql, values } = searchjs()
+    const { sql, values } = where()
       .or([
         ["name", "ne", "john"],
         ["name", "ne", "doe"],
@@ -94,7 +94,7 @@ describe("Tests ne operator", () => {
   });
 
   test("Tests or and ne and conditions on the same search", () => {
-    const { sql, values } = searchjs()
+    const { sql, values } = where()
       .and("age", "ne", 32)
       .or([
         ["name", "ne", "john"],
@@ -110,7 +110,7 @@ describe("Tests ne operator", () => {
 
   test("Error on pass array as value", () => {
     expect(() =>
-      searchjs()
+      where()
         .and("name", "ne", "john")
         .and("email", "ne", "john@doe.com")
         .and("age", "ne", ["23"])
@@ -119,7 +119,7 @@ describe("Tests ne operator", () => {
   });
 
   test("On number value", () => {
-    const { sql, values } = searchjs().and("name", "ne", 3).build();
+    const { sql, values } = where().and("name", "ne", 3).build();
 
     expect(sql).toBe('1 = 1 AND "name" != ?');
     expect(values).toEqual([3]);
