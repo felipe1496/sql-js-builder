@@ -72,6 +72,7 @@ function getSqlPlaceholder(op: Operator, value: any) {
     case "ew":
       return `%?`;
     case "in":
+    case "nin":
       return `(${value.map(() => "?").join(", ")})`;
     default:
       return "?";
