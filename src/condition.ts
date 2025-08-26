@@ -49,6 +49,7 @@ function validateInputOperatorToValue(op: Operator, value: any) {
       }
       break;
     case "eq":
+    case "ne":
       if (typeof value !== "string" && typeof value !== "number") {
         throw new Error(`Value must be string or number for ${op} operator`);
       }
