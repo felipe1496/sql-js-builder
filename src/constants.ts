@@ -1,0 +1,16 @@
+export const operators = {
+  eq: "=",
+  ne: "!=",
+  gt: ">",
+  gte: ">=",
+  lt: "<",
+  lte: "<=",
+  in: "IN",
+  nin: "NOT IN",
+  like: "LIKE",
+  nlike: "NOT LIKE",
+  sw: "LIKE",
+  ew: "LIKE",
+  is: "IS",
+  isn: "IS NOT",
+};
