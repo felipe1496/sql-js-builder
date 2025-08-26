@@ -34,6 +34,7 @@ export function where() {
     const parsed = conds.map((c) => {
       if (Array.isArray(c)) {
         const orConditions = c.map((orCond) => parseConditionSQL(orCond));
+
         return {
           sql: `(${orConditions.map((orCond) => orCond.sql).join(" OR ")})`,
           value: orConditions.map((orCond) => orCond.value),
@@ -46,9 +47,10 @@ export function where() {
     if (parsed.length) {
       sql += ` AND ${parsed.map((p) => p.sql).join(" AND ")}`;
     }
+
     return {
       sql,
-      values: parsed.map((p) => p.value).flat(),
+      values: parsed.map((p) => p.value).flat(Infinity),
     };
   }
 

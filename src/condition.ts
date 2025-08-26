@@ -50,6 +50,10 @@ function validateInputOperatorToValue(op: Operator, value: any) {
       break;
     case "eq":
     case "ne":
+    case "gt":
+    case "gte":
+    case "lt":
+    case "lte":
       if (typeof value !== "string" && typeof value !== "number") {
         throw new Error(`Value must be string or number for ${op} operator`);
       }
@@ -67,6 +71,8 @@ function getSqlPlaceholder(op: Operator, value: any) {
       return `?%`;
     case "ew":
       return `%?`;
+    case "in":
+      return `(${value.map(() => "?").join(", ")})`;
     default:
       return "?";
   }
