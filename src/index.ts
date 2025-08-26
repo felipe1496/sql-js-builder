@@ -5,7 +5,7 @@ import {
   parseConditionSQL,
 } from "./condition";
 
-export function searchjs() {
+export function where() {
   const conds: (Condition | Condition[])[] = [];
 
   function and(field: string, operator: Operator, value: any) {
