@@ -80,7 +80,7 @@ npm i sql-js-builder
 
 ## Getting Started
 
-## where function
+### where function
 
 The where function lets you build WHERE filters using a JavaScript-friendly syntax instead of manual string concatenation.
 
