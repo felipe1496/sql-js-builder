@@ -10,9 +10,9 @@ SQL JS Builder is fully driver-agnostic. Its output is just a plain SQL fragment
 
 With that in mind, SQL JS Builder was created as a lightweight utility package to simplify the creation of SQL `WHERE` clauses in `SELECT` statements. Instead of dealing with error-prone string concatenation, the library provides a clean, JavaScript-based data structure combined with the builder pattern. This makes it easier to express complex filters in a structured way, while keeping your codebase maintainable and less dependent on external SQL manipulation libraries.
 
-## Caveats
+# Caveats
 
-### Placeholders
+## Placeholders
 
 Currently, **SQL JS Builder** uses `?` as the placeholder for values in your SQL statements. This design choice keeps the library simple, since it avoids dealing with indexed placeholders like `$1, $2, $3`.
 
@@ -70,10 +70,37 @@ replacePlaceholders('SELECT * FROM books WHERE title = "?" AND author_id = ?');
 // SELECT * FROM books WHERE title = "?" AND author_id = $1
 ```
 
-## Documentation
+# Documentation
 
-### Instalation
+## Instalation
 
 ```shell
 npm i sql-js-builder
+```
+
+## Getting Started
+
+## where function
+
+The where function lets you build WHERE filters using a JavaScript-friendly syntax instead of manual string concatenation.
+
+```typescript
+import { where } from "sql-js-builder";
+
+const { sql, values } = where().and("name", "eq", "John Snow").build();
+
+// sql: 1 = 1 AND "name" = ?
+// values: ["John Snow"]
+```
+
+This returns a SQL string along with an array of the values you provided. You can then pass both directly to your database driver to run the query, like so:
+
+```typescript
+const { sql, values } = where()
+  .and("age", "gte", 18)
+  .and("country", "eq", "Brazil")
+  .build();
+
+const query = `SELECT * FROM users WHERE ${sql}`;
+const [rows] = await db.execute(query, values);
 ```
