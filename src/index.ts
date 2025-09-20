@@ -1,2 +1,2 @@
 export * from "./where";
-export * from "./types";
+export type * from "./types";
