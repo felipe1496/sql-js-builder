@@ -4,8 +4,10 @@ describe("Tests nlike operator", () => {
   test("Regular nlike value", () => {
     const { sql, values } = where().and("name", "nlike", "john").build();
 
-    expect(sql).toBe(`1 = 1 AND upper("name") NOT LIKE upper(?)`);
-    expect(values).toEqual(["%john%"]);
+    expect(sql).toBe(
+      `1 = 1 AND upper("name") NOT LIKE upper(?) LIMIT ? OFFSET ?`
+    );
+    expect(values).toEqual(["%john%", 200, 0]);
   });
 
   test("Multiple nlike condition on the same condition", () => {
@@ -15,9 +17,9 @@ describe("Tests nlike operator", () => {
       .build();
 
     expect(sql).toBe(
-      '1 = 1 AND upper("name") NOT LIKE upper(?) AND upper("email") NOT LIKE upper(?)'
+      '1 = 1 AND upper("name") NOT LIKE upper(?) AND upper("email") NOT LIKE upper(?) LIMIT ? OFFSET ?'
     );
-    expect(values).toEqual(["%john%", "%john@d%"]);
+    expect(values).toEqual(["%john%", "%john@d%", 200, 0]);
   });
 
   test("Test nlike or conditions", () => {
@@ -28,9 +30,9 @@ describe("Tests nlike operator", () => {
       ])
       .build();
     expect(sql).toBe(
-      '1 = 1 AND (upper("name") NOT LIKE upper(?) OR upper("name") NOT LIKE upper(?))'
+      '1 = 1 AND (upper("name") NOT LIKE upper(?) OR upper("name") NOT LIKE upper(?)) LIMIT ? OFFSET ?'
     );
-    expect(values).toEqual(["%john%", "%doe%"]);
+    expect(values).toEqual(["%john%", "%doe%", 200, 0]);
   });
 
   test("Tests or and and eq conditions on the same search", () => {
@@ -43,9 +45,9 @@ describe("Tests nlike operator", () => {
       .and("email", "nlike", "john@doe")
       .build();
     expect(sql).toBe(
-      '1 = 1 AND upper("age") NOT LIKE upper(?) AND (upper("name") NOT LIKE upper(?) OR upper("name") NOT LIKE upper(?)) AND upper("email") NOT LIKE upper(?)'
+      '1 = 1 AND upper("age") NOT LIKE upper(?) AND (upper("name") NOT LIKE upper(?) OR upper("name") NOT LIKE upper(?)) AND upper("email") NOT LIKE upper(?) LIMIT ? OFFSET ?'
     );
-    expect(values).toEqual(["%32%", "%john%", "%doe%", "%john@doe%"]);
+    expect(values).toEqual(["%32%", "%john%", "%doe%", "%john@doe%", 200, 0]);
   });
 
   test("Error on pass array as value", () => {

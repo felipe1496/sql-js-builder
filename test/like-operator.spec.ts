@@ -4,8 +4,8 @@ describe("Tests like operator", () => {
   test("Regular like value", () => {
     const { sql, values } = where().and("name", "like", "john").build();
 
-    expect(sql).toBe(`1 = 1 AND upper("name") LIKE upper(?)`);
-    expect(values).toEqual(["%john%"]);
+    expect(sql).toBe(`1 = 1 AND upper("name") LIKE upper(?) LIMIT ? OFFSET ?`);
+    expect(values).toEqual(["%john%", 200, 0]);
   });
 
   test("Multiple like condition on the same condition", () => {
@@ -15,9 +15,9 @@ describe("Tests like operator", () => {
       .build();
 
     expect(sql).toBe(
-      '1 = 1 AND upper("name") LIKE upper(?) AND upper("email") LIKE upper(?)'
+      '1 = 1 AND upper("name") LIKE upper(?) AND upper("email") LIKE upper(?) LIMIT ? OFFSET ?'
     );
-    expect(values).toEqual(["%john%", "%john@d%"]);
+    expect(values).toEqual(["%john%", "%john@d%", 200, 0]);
   });
 
   test("Test like or conditions", () => {
@@ -28,9 +28,9 @@ describe("Tests like operator", () => {
       ])
       .build();
     expect(sql).toBe(
-      '1 = 1 AND (upper("name") LIKE upper(?) OR upper("name") LIKE upper(?))'
+      '1 = 1 AND (upper("name") LIKE upper(?) OR upper("name") LIKE upper(?)) LIMIT ? OFFSET ?'
     );
-    expect(values).toEqual(["%john%", "%doe%"]);
+    expect(values).toEqual(["%john%", "%doe%", 200, 0]);
   });
 
   test("Tests or and and eq conditions on the same search", () => {
@@ -43,9 +43,9 @@ describe("Tests like operator", () => {
       .and("email", "like", "john@doe")
       .build();
     expect(sql).toBe(
-      '1 = 1 AND upper("age") LIKE upper(?) AND (upper("name") LIKE upper(?) OR upper("name") LIKE upper(?)) AND upper("email") LIKE upper(?)'
+      '1 = 1 AND upper("age") LIKE upper(?) AND (upper("name") LIKE upper(?) OR upper("name") LIKE upper(?)) AND upper("email") LIKE upper(?) LIMIT ? OFFSET ?'
     );
-    expect(values).toEqual(["%32%", "%john%", "%doe%", "%john@doe%"]);
+    expect(values).toEqual(["%32%", "%john%", "%doe%", "%john@doe%", 200, 0]);
   });
 
   test("Error on pass array as value", () => {

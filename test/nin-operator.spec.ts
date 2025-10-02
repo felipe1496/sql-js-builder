@@ -4,8 +4,8 @@ describe("Tests not in operator", () => {
   test("Regular not in condition", () => {
     const { sql, values } = where().and("age", "nin", [40, 32, 80]).build();
 
-    expect(sql).toBe('1 = 1 AND "age" NOT IN (?, ?, ?)');
-    expect(values).toEqual([40, 32, 80]);
+    expect(sql).toBe('1 = 1 AND "age" NOT IN (?, ?, ?) LIMIT ? OFFSET ?');
+    expect(values).toEqual([40, 32, 80, 200, 0]);
   });
 
   test("Multiple not in condition on the same condition", () => {
@@ -16,9 +16,18 @@ describe("Tests not in operator", () => {
       .build();
 
     expect(sql).toBe(
-      '1 = 1 AND "age" NOT IN (?, ?, ?) AND "email" NOT IN (?) AND "rank" NOT IN (?, ?)'
+      '1 = 1 AND "age" NOT IN (?, ?, ?) AND "email" NOT IN (?) AND "rank" NOT IN (?, ?) LIMIT ? OFFSET ?'
     );
-    expect(values).toEqual([40, 32, 80, "john@doe.com", "gold", "silver"]);
+    expect(values).toEqual([
+      40,
+      32,
+      80,
+      "john@doe.com",
+      "gold",
+      "silver",
+      200,
+      0,
+    ]);
   });
 
   test("Test not in or conditions", () => {
@@ -29,9 +38,9 @@ describe("Tests not in operator", () => {
       ])
       .build();
     expect(sql).toBe(
-      '1 = 1 AND ("age" NOT IN (?, ?, ?) OR "email" NOT IN (?))'
+      '1 = 1 AND ("age" NOT IN (?, ?, ?) OR "email" NOT IN (?)) LIMIT ? OFFSET ?'
     );
-    expect(values).toEqual([40, 32, 80, "john@doe.com"]);
+    expect(values).toEqual([40, 32, 80, "john@doe.com", 200, 0]);
   });
 
   test("Tests or and not in and conditions on the same search", () => {
@@ -44,7 +53,7 @@ describe("Tests not in operator", () => {
       .and("email", "nin", ["john@doe.com"])
       .build();
     expect(sql).toBe(
-      '1 = 1 AND "ranking" NOT IN (?, ?, ?) AND ("age" NOT IN (?, ?, ?) OR "email" NOT IN (?)) AND "email" NOT IN (?)'
+      '1 = 1 AND "ranking" NOT IN (?, ?, ?) AND ("age" NOT IN (?, ?, ?) OR "email" NOT IN (?)) AND "email" NOT IN (?) LIMIT ? OFFSET ?'
     );
     expect(values).toEqual([
       10,
@@ -55,6 +64,8 @@ describe("Tests not in operator", () => {
       80,
       "john@doe.com",
       "john@doe.com",
+      200,
+      0,
     ]);
   });
 

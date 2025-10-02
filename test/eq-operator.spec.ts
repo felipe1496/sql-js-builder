@@ -4,8 +4,8 @@ describe("Tests eq operator", () => {
   test("Regular eq value", () => {
     const { sql, values } = where().and("name", "eq", "john").build();
 
-    expect(sql).toBe('1 = 1 AND "name" = ?');
-    expect(values).toEqual(["john"]);
+    expect(sql).toBe('1 = 1 AND "name" = ? LIMIT ? OFFSET ?');
+    expect(values).toEqual(["john", 200, 0]);
   });
 
   test("Multiple eq condition on the same condition", () => {
@@ -15,8 +15,10 @@ describe("Tests eq operator", () => {
       .and("age", "eq", 23)
       .build();
 
-    expect(sql).toBe('1 = 1 AND "name" = ? AND "email" = ? AND "age" = ?');
-    expect(values).toEqual(["john", "john@doe.com", 23]);
+    expect(sql).toBe(
+      '1 = 1 AND "name" = ? AND "email" = ? AND "age" = ? LIMIT ? OFFSET ?'
+    );
+    expect(values).toEqual(["john", "john@doe.com", 23, 200, 0]);
   });
 
   test("Test eq or conditions", () => {
@@ -26,8 +28,8 @@ describe("Tests eq operator", () => {
         ["name", "eq", "doe"],
       ])
       .build();
-    expect(sql).toBe('1 = 1 AND ("name" = ? OR "name" = ?)');
-    expect(values).toEqual(["john", "doe"]);
+    expect(sql).toBe('1 = 1 AND ("name" = ? OR "name" = ?) LIMIT ? OFFSET ?');
+    expect(values).toEqual(["john", "doe", 200, 0]);
   });
 
   test("Tests or and and eq conditions on the same search", () => {
@@ -40,9 +42,9 @@ describe("Tests eq operator", () => {
       .and("email", "eq", "john@doe.com")
       .build();
     expect(sql).toBe(
-      '1 = 1 AND "age" = ? AND ("name" = ? OR "name" = ?) AND "email" = ?'
+      '1 = 1 AND "age" = ? AND ("name" = ? OR "name" = ?) AND "email" = ? LIMIT ? OFFSET ?'
     );
-    expect(values).toEqual([32, "john", "doe", "john@doe.com"]);
+    expect(values).toEqual([32, "john", "doe", "john@doe.com", 200, 0]);
   });
 
   test("Error on pass array as value", () => {
@@ -68,7 +70,7 @@ describe("Tests eq operator", () => {
   test("On number value", () => {
     const { sql, values } = where().and("name", "eq", 3).build();
 
-    expect(sql).toBe('1 = 1 AND "name" = ?');
-    expect(values).toEqual([3]);
+    expect(sql).toBe('1 = 1 AND "name" = ? LIMIT ? OFFSET ?');
+    expect(values).toEqual([3, 200, 0]);
   });
 });

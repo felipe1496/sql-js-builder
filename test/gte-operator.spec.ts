@@ -4,8 +4,8 @@ describe("Tests gte operator", () => {
   test("Regular gte condition", () => {
     const { sql, values } = where().and("age", "gte", 40).build();
 
-    expect(sql).toBe('1 = 1 AND "age" >= ?');
-    expect(values).toEqual([40]);
+    expect(sql).toBe('1 = 1 AND "age" >= ? LIMIT ? OFFSET ?');
+    expect(values).toEqual([40, 200, 0]);
   });
 
   test("Multiple gte condition on the same condition", () => {
@@ -16,9 +16,9 @@ describe("Tests gte operator", () => {
       .build();
 
     expect(sql).toBe(
-      '1 = 1 AND "age" >= ? AND "accounts" >= ? AND "ranking" >= ?'
+      '1 = 1 AND "age" >= ? AND "accounts" >= ? AND "ranking" >= ? LIMIT ? OFFSET ?'
     );
-    expect(values).toEqual([23, 3, 10]);
+    expect(values).toEqual([23, 3, 10, 200, 0]);
   });
 
   test("Test gte or conditions", () => {
@@ -28,8 +28,10 @@ describe("Tests gte operator", () => {
         ["accounts", "gte", 3],
       ])
       .build();
-    expect(sql).toBe('1 = 1 AND ("age" >= ? OR "accounts" >= ?)');
-    expect(values).toEqual([23, 3]);
+    expect(sql).toBe(
+      '1 = 1 AND ("age" >= ? OR "accounts" >= ?) LIMIT ? OFFSET ?'
+    );
+    expect(values).toEqual([23, 3, 200, 0]);
   });
 
   test("Tests or and ne and conditions on the same search", () => {
@@ -42,9 +44,9 @@ describe("Tests gte operator", () => {
       .and("email", "gte", "a")
       .build();
     expect(sql).toBe(
-      '1 = 1 AND "ranking" >= ? AND ("age" >= ? OR "accounts" >= ?) AND "email" >= ?'
+      '1 = 1 AND "ranking" >= ? AND ("age" >= ? OR "accounts" >= ?) AND "email" >= ? LIMIT ? OFFSET ?'
     );
-    expect(values).toEqual([10, 23, 3, "a"]);
+    expect(values).toEqual([10, 23, 3, "a", 200, 0]);
   });
 
   test("Error on pass array as value", () => {
@@ -70,7 +72,7 @@ describe("Tests gte operator", () => {
   test("On number value", () => {
     const { sql, values } = where().and("age", "gte", 3).build();
 
-    expect(sql).toBe('1 = 1 AND "age" >= ?');
-    expect(values).toEqual([3]);
+    expect(sql).toBe('1 = 1 AND "age" >= ? LIMIT ? OFFSET ?');
+    expect(values).toEqual([3, 200, 0]);
   });
 });

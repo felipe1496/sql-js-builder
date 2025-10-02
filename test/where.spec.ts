@@ -5,15 +5,15 @@ describe("Tests where", () => {
     test("Sem condições", () => {
       const { sql, values } = where().build();
 
-      expect(sql).toBe("1 = 1");
-      expect(values).toEqual([]);
+      expect(sql).toBe("1 = 1 LIMIT ? OFFSET ?");
+      expect(values).toEqual([200, 0]);
     });
 
     test("Com uma condição simples", () => {
       const { sql, values } = where().and("name", "eq", "john").build();
 
-      expect(sql).toBe('1 = 1 AND "name" = ?');
-      expect(values).toEqual(["john"]);
+      expect(sql).toBe('1 = 1 AND "name" = ? LIMIT ? OFFSET ?');
+      expect(values).toEqual(["john", 200, 0]);
     });
 
     test("Com múltiplas condições AND", () => {
@@ -24,9 +24,9 @@ describe("Tests where", () => {
         .build();
 
       expect(sql).toBe(
-        '1 = 1 AND "name" = ? AND "age" >= ? AND upper("email") LIKE upper(?)'
+        '1 = 1 AND "name" = ? AND "age" >= ? AND upper("email") LIKE upper(?) LIMIT ? OFFSET ?'
       );
-      expect(values).toEqual(["john", 25, "%john@%"]);
+      expect(values).toEqual(["john", 25, "%john@%", 200, 0]);
     });
   });
 
@@ -41,7 +41,7 @@ describe("Tests where", () => {
         .build();
 
       expect(sql).toBe(
-        '1 = 1 AND "status" = ? AND "age" >= ? AND "category" IN (?, ?) AND upper("title") LIKE upper(?) AND "is_featured" IS ?'
+        '1 = 1 AND "status" = ? AND "age" >= ? AND "category" IN (?, ?) AND upper("title") LIKE upper(?) AND "is_featured" IS ? LIMIT ? OFFSET ?'
       );
       expect(values).toEqual([
         "active",
@@ -50,6 +50,8 @@ describe("Tests where", () => {
         "books",
         "%javascript%",
         true,
+        200,
+        0,
       ]);
     });
 
@@ -62,9 +64,9 @@ describe("Tests where", () => {
         .build();
 
       expect(sql).toBe(
-        '1 = 1 AND "price" >= ? AND "price" <= ? AND upper("name") LIKE upper(?) AND upper("email") LIKE upper(?)'
+        '1 = 1 AND "price" >= ? AND "price" <= ? AND upper("name") LIKE upper(?) AND upper("email") LIKE upper(?) LIMIT ? OFFSET ?'
       );
-      expect(values).toEqual([10, 100, "admin%", "%@gmail.com"]);
+      expect(values).toEqual([10, 100, "admin%", "%@gmail.com", 200, 0]);
     });
   });
 
@@ -76,8 +78,10 @@ describe("Tests where", () => {
           ["status", "eq", "pending"],
         ])
         .build();
-      expect(sql).toBe('1 = 1 AND ("status" = ? OR "status" = ?)');
-      expect(values).toEqual(["active", "pending"]);
+      expect(sql).toBe(
+        '1 = 1 AND ("status" = ? OR "status" = ?) LIMIT ? OFFSET ?'
+      );
+      expect(values).toEqual(["active", "pending", 200, 0]);
     });
 
     test("Múltiplas condições OR", () => {
@@ -89,9 +93,9 @@ describe("Tests where", () => {
         ])
         .build();
       expect(sql).toBe(
-        '1 = 1 AND ("category" = ? OR "category" = ? OR "category" = ?)'
+        '1 = 1 AND ("category" = ? OR "category" = ? OR "category" = ?) LIMIT ? OFFSET ?'
       );
-      expect(values).toEqual(["tech", "science", "engineering"]);
+      expect(values).toEqual(["tech", "science", "engineering", 200, 0]);
     });
 
     test("OR com diferentes operadores", () => {
@@ -103,9 +107,9 @@ describe("Tests where", () => {
         ])
         .build();
       expect(sql).toBe(
-        '1 = 1 AND ("age" >= ? OR "role" = ? OR "is_verified" IS ?)'
+        '1 = 1 AND ("age" >= ? OR "role" = ? OR "is_verified" IS ?) LIMIT ? OFFSET ?'
       );
-      expect(values).toEqual([18, "admin", true]);
+      expect(values).toEqual([18, "admin", true, 200, 0]);
     });
   });
 
@@ -120,9 +124,9 @@ describe("Tests where", () => {
         .and("age", "gte", 18)
         .build();
       expect(sql).toBe(
-        '1 = 1 AND "is_active" IS ? AND ("role" = ? OR "role" = ?) AND "age" >= ?'
+        '1 = 1 AND "is_active" IS ? AND ("role" = ? OR "role" = ?) AND "age" >= ? LIMIT ? OFFSET ?'
       );
-      expect(values).toEqual([true, "admin", "moderator", 18]);
+      expect(values).toEqual([true, "admin", "moderator", 18, 200, 0]);
     });
 
     test("Múltiplos ORs", () => {
@@ -137,9 +141,17 @@ describe("Tests where", () => {
         ])
         .build();
       expect(sql).toBe(
-        '1 = 1 AND ("status" = ? OR "status" = ?) AND ("category" IN (?, ?) OR "priority" >= ?)'
+        '1 = 1 AND ("status" = ? OR "status" = ?) AND ("category" IN (?, ?) OR "priority" >= ?) LIMIT ? OFFSET ?'
       );
-      expect(values).toEqual(["active", "pending", "tech", "science", 8]);
+      expect(values).toEqual([
+        "active",
+        "pending",
+        "tech",
+        "science",
+        8,
+        200,
+        0,
+      ]);
     });
 
     test("Condições complexas com diferentes tipos", () => {
@@ -157,7 +169,7 @@ describe("Tests where", () => {
         ])
         .build();
       expect(sql).toBe(
-        '1 = 1 AND "created_at" >= ? AND ("status" = ? OR "is_featured" IS ?) AND "category" IN (?, ?, ?) AND upper("title") LIKE upper(?) AND ("author_id" = ? OR "author_id" = ?)'
+        '1 = 1 AND "created_at" >= ? AND ("status" = ? OR "is_featured" IS ?) AND "category" IN (?, ?, ?) AND upper("title") LIKE upper(?) AND ("author_id" = ? OR "author_id" = ?) LIMIT ? OFFSET ?'
       );
       expect(values).toEqual([
         "2023-01-01",
@@ -169,6 +181,8 @@ describe("Tests where", () => {
         "%javascript%",
         1,
         2,
+        200,
+        0,
       ]);
     });
   });
@@ -186,9 +200,17 @@ describe("Tests where", () => {
         .build();
 
       expect(sql).toBe(
-        '1 = 1 AND "is_active" IS ? AND "age" >= ? AND ("role" = ? OR "role" = ?) AND upper("email") LIKE upper(?)'
+        '1 = 1 AND "is_active" IS ? AND "age" >= ? AND ("role" = ? OR "role" = ?) AND upper("email") LIKE upper(?) LIMIT ? OFFSET ?'
       );
-      expect(values).toEqual([true, 18, "admin", "moderator", "%@gmail.com%"]);
+      expect(values).toEqual([
+        true,
+        18,
+        "admin",
+        "moderator",
+        "%@gmail.com%",
+        200,
+        0,
+      ]);
     });
 
     test("Filtro de produtos", () => {
@@ -204,9 +226,19 @@ describe("Tests where", () => {
         .build();
 
       expect(sql).toBe(
-        '1 = 1 AND "price" >= ? AND "price" <= ? AND "category" IN (?, ?) AND ("is_featured" IS ? OR "rating" >= ?) AND "stock" > ?'
+        '1 = 1 AND "price" >= ? AND "price" <= ? AND "category" IN (?, ?) AND ("is_featured" IS ? OR "rating" >= ?) AND "stock" > ? LIMIT ? OFFSET ?'
       );
-      expect(values).toEqual([10, 100, "electronics", "books", true, 4.5, 0]);
+      expect(values).toEqual([
+        10,
+        100,
+        "electronics",
+        "books",
+        true,
+        4.5,
+        0,
+        200,
+        0,
+      ]);
     });
 
     test("Busca de artigos", () => {
@@ -222,7 +254,7 @@ describe("Tests where", () => {
         .build();
 
       expect(sql).toBe(
-        '1 = 1 AND "status" = ? AND "published_at" >= ? AND (upper("title") LIKE upper(?) OR upper("content") LIKE upper(?)) AND "author_id" IN (?, ?, ?, ?, ?) AND "is_deleted" IS ?'
+        '1 = 1 AND "status" = ? AND "published_at" >= ? AND (upper("title") LIKE upper(?) OR upper("content") LIKE upper(?)) AND "author_id" IN (?, ?, ?, ?, ?) AND "is_deleted" IS ? LIMIT ? OFFSET ?'
       );
       expect(values).toEqual([
         "published",
@@ -235,6 +267,8 @@ describe("Tests where", () => {
         4,
         5,
         false,
+        200,
+        0,
       ]);
     });
   });
@@ -250,7 +284,7 @@ describe("Tests where", () => {
       }
 
       const { sql, values } = query.build();
-      expect(values).toEqual(expectedValues);
+      expect(values).toEqual([...expectedValues, 200, 0]);
       expect(sql).toContain("1 = 1 AND");
       expect(sql.split("AND").length).toBe(11);
     });
@@ -265,7 +299,7 @@ describe("Tests where", () => {
       }
 
       const { sql, values } = where().or(orConditions).build();
-      expect(values).toEqual(expectedValues);
+      expect(values).toEqual([...expectedValues, 200, 0]);
       expect(sql).toContain("OR");
       expect(sql.split("OR").length).toBe(5);
     });
@@ -307,8 +341,8 @@ describe("Tests where", () => {
     test("Tests where from str value", () => {
       const { sql, values } = where("name eq 'john' and age gte 25").build();
 
-      expect(sql).toBe('1 = 1 AND "name" = ? AND "age" >= ?');
-      expect(values).toEqual(["john", 25]);
+      expect(sql).toBe('1 = 1 AND "name" = ? AND "age" >= ? LIMIT ? OFFSET ?');
+      expect(values).toEqual(["john", 25, 200, 0]);
     });
   });
 });

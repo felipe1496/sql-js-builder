@@ -6,8 +6,8 @@ describe("Tests parse string to where structure", () => {
       "name eq 'john' and age gte 25"
     ).build();
 
-    expect(sql).toBe('1 = 1 AND "name" = ? AND "age" >= ?');
-    expect(values).toEqual(["john", 25]);
+    expect(sql).toBe('1 = 1 AND "name" = ? AND "age" >= ? LIMIT ? OFFSET ?');
+    expect(values).toEqual(["john", 25, 200, 0]);
   });
 
   test("Regular ne conditions", () => {
@@ -15,8 +15,8 @@ describe("Tests parse string to where structure", () => {
       "name ne 'john' and age gte 25"
     ).build();
 
-    expect(sql).toBe('1 = 1 AND "name" != ? AND "age" >= ?');
-    expect(values).toEqual(["john", 25]);
+    expect(sql).toBe('1 = 1 AND "name" != ? AND "age" >= ? LIMIT ? OFFSET ?');
+    expect(values).toEqual(["john", 25, 200, 0]);
   });
 
   test("Regular gt conditions", () => {
@@ -24,8 +24,8 @@ describe("Tests parse string to where structure", () => {
       "name gt 'john' and age gte 25"
     ).build();
 
-    expect(sql).toBe('1 = 1 AND "name" > ? AND "age" >= ?');
-    expect(values).toEqual(["john", 25]);
+    expect(sql).toBe('1 = 1 AND "name" > ? AND "age" >= ? LIMIT ? OFFSET ?');
+    expect(values).toEqual(["john", 25, 200, 0]);
   });
 
   test("Regular gte conditions", () => {
@@ -33,8 +33,8 @@ describe("Tests parse string to where structure", () => {
       "name gte 'john' and age gte 25"
     ).build();
 
-    expect(sql).toBe('1 = 1 AND "name" >= ? AND "age" >= ?');
-    expect(values).toEqual(["john", 25]);
+    expect(sql).toBe('1 = 1 AND "name" >= ? AND "age" >= ? LIMIT ? OFFSET ?');
+    expect(values).toEqual(["john", 25, 200, 0]);
   });
 
   test("Regular lt conditions", () => {
@@ -42,8 +42,8 @@ describe("Tests parse string to where structure", () => {
       "name lt 'john' and age gte 25"
     ).build();
 
-    expect(sql).toBe('1 = 1 AND "name" < ? AND "age" >= ?');
-    expect(values).toEqual(["john", 25]);
+    expect(sql).toBe('1 = 1 AND "name" < ? AND "age" >= ? LIMIT ? OFFSET ?');
+    expect(values).toEqual(["john", 25, 200, 0]);
   });
 
   test("Regular lte conditions", () => {
@@ -51,8 +51,8 @@ describe("Tests parse string to where structure", () => {
       "name lte 'john' and age gte 25"
     ).build();
 
-    expect(sql).toBe('1 = 1 AND "name" <= ? AND "age" >= ?');
-    expect(values).toEqual(["john", 25]);
+    expect(sql).toBe('1 = 1 AND "name" <= ? AND "age" >= ? LIMIT ? OFFSET ?');
+    expect(values).toEqual(["john", 25, 200, 0]);
   });
 
   test("Regular in conditions", () => {
@@ -60,8 +60,10 @@ describe("Tests parse string to where structure", () => {
       "name in ('john', 'doe') and age gte 25"
     ).build();
 
-    expect(sql).toBe('1 = 1 AND "name" IN (?, ?) AND "age" >= ?');
-    expect(values).toEqual(["john", "doe", 25]);
+    expect(sql).toBe(
+      '1 = 1 AND "name" IN (?, ?) AND "age" >= ? LIMIT ? OFFSET ?'
+    );
+    expect(values).toEqual(["john", "doe", 25, 200, 0]);
   });
 
   test("Regular not in conditions", () => {
@@ -69,8 +71,10 @@ describe("Tests parse string to where structure", () => {
       "name nin ('john', 'doe') and age gte 25"
     ).build();
 
-    expect(sql).toBe('1 = 1 AND "name" NOT IN (?, ?) AND "age" >= ?');
-    expect(values).toEqual(["john", "doe", 25]);
+    expect(sql).toBe(
+      '1 = 1 AND "name" NOT IN (?, ?) AND "age" >= ? LIMIT ? OFFSET ?'
+    );
+    expect(values).toEqual(["john", "doe", 25, 200, 0]);
   });
 
   test("Regular is conditions", () => {
@@ -78,8 +82,8 @@ describe("Tests parse string to where structure", () => {
       "name is null and age gte 25"
     ).build();
 
-    expect(sql).toBe('1 = 1 AND "name" IS ? AND "age" >= ?');
-    expect(values).toEqual([null, 25]);
+    expect(sql).toBe('1 = 1 AND "name" IS ? AND "age" >= ? LIMIT ? OFFSET ?');
+    expect(values).toEqual([null, 25, 200, 0]);
   });
 
   test("Regular is not conditions", () => {
@@ -87,8 +91,10 @@ describe("Tests parse string to where structure", () => {
       "name isn null and age gte 25"
     ).build();
 
-    expect(sql).toBe('1 = 1 AND "name" IS NOT ? AND "age" >= ?');
-    expect(values).toEqual([null, 25]);
+    expect(sql).toBe(
+      '1 = 1 AND "name" IS NOT ? AND "age" >= ? LIMIT ? OFFSET ?'
+    );
+    expect(values).toEqual([null, 25, 200, 0]);
   });
 
   test("Regular like conditions", () => {
@@ -96,8 +102,10 @@ describe("Tests parse string to where structure", () => {
       "name like 'john' and age gte 25"
     ).build();
 
-    expect(sql).toBe('1 = 1 AND upper("name") LIKE upper(?) AND "age" >= ?');
-    expect(values).toEqual(["%john%", 25]);
+    expect(sql).toBe(
+      '1 = 1 AND upper("name") LIKE upper(?) AND "age" >= ? LIMIT ? OFFSET ?'
+    );
+    expect(values).toEqual(["%john%", 25, 200, 0]);
   });
 
   test("Regular not like conditions", () => {
@@ -106,9 +114,9 @@ describe("Tests parse string to where structure", () => {
     ).build();
 
     expect(sql).toBe(
-      '1 = 1 AND upper("name") NOT LIKE upper(?) AND "age" >= ?'
+      '1 = 1 AND upper("name") NOT LIKE upper(?) AND "age" >= ? LIMIT ? OFFSET ?'
     );
-    expect(values).toEqual(["%john%", 25]);
+    expect(values).toEqual(["%john%", 25, 200, 0]);
   });
 
   test("Regular starts with conditions", () => {
@@ -116,8 +124,10 @@ describe("Tests parse string to where structure", () => {
       "name sw 'john' and age gte 25"
     ).build();
 
-    expect(sql).toBe('1 = 1 AND upper("name") LIKE upper(?) AND "age" >= ?');
-    expect(values).toEqual(["john%", 25]);
+    expect(sql).toBe(
+      '1 = 1 AND upper("name") LIKE upper(?) AND "age" >= ? LIMIT ? OFFSET ?'
+    );
+    expect(values).toEqual(["john%", 25, 200, 0]);
   });
 
   test("Regular ends with conditions", () => {
@@ -125,7 +135,9 @@ describe("Tests parse string to where structure", () => {
       "name ew 'john' and age gte 25"
     ).build();
 
-    expect(sql).toBe('1 = 1 AND upper("name") LIKE upper(?) AND "age" >= ?');
-    expect(values).toEqual(["%john", 25]);
+    expect(sql).toBe(
+      '1 = 1 AND upper("name") LIKE upper(?) AND "age" >= ? LIMIT ? OFFSET ?'
+    );
+    expect(values).toEqual(["%john", 25, 200, 0]);
   });
 });

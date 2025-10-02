@@ -4,8 +4,8 @@ describe("Tests in operator", () => {
   test("Regular in condition", () => {
     const { sql, values } = where().and("age", "in", [40, 32, 80]).build();
 
-    expect(sql).toBe('1 = 1 AND "age" IN (?, ?, ?)');
-    expect(values).toEqual([40, 32, 80]);
+    expect(sql).toBe('1 = 1 AND "age" IN (?, ?, ?) LIMIT ? OFFSET ?');
+    expect(values).toEqual([40, 32, 80, 200, 0]);
   });
 
   test("Multiple in condition on the same condition", () => {
@@ -16,9 +16,18 @@ describe("Tests in operator", () => {
       .build();
 
     expect(sql).toBe(
-      '1 = 1 AND "age" IN (?, ?, ?) AND "email" IN (?) AND "rank" IN (?, ?)'
+      '1 = 1 AND "age" IN (?, ?, ?) AND "email" IN (?) AND "rank" IN (?, ?) LIMIT ? OFFSET ?'
     );
-    expect(values).toEqual([40, 32, 80, "john@doe.com", "gold", "silver"]);
+    expect(values).toEqual([
+      40,
+      32,
+      80,
+      "john@doe.com",
+      "gold",
+      "silver",
+      200,
+      0,
+    ]);
   });
 
   test("Test in or conditions", () => {
@@ -28,8 +37,10 @@ describe("Tests in operator", () => {
         ["email", "in", ["john@doe.com"]],
       ])
       .build();
-    expect(sql).toBe('1 = 1 AND ("age" IN (?, ?, ?) OR "email" IN (?))');
-    expect(values).toEqual([40, 32, 80, "john@doe.com"]);
+    expect(sql).toBe(
+      '1 = 1 AND ("age" IN (?, ?, ?) OR "email" IN (?)) LIMIT ? OFFSET ?'
+    );
+    expect(values).toEqual([40, 32, 80, "john@doe.com", 200, 0]);
   });
 
   test("Tests or and in and conditions on the same search", () => {
@@ -42,7 +53,7 @@ describe("Tests in operator", () => {
       .and("email", "in", ["john@doe.com"])
       .build();
     expect(sql).toBe(
-      '1 = 1 AND "ranking" IN (?, ?, ?) AND ("age" IN (?, ?, ?) OR "email" IN (?)) AND "email" IN (?)'
+      '1 = 1 AND "ranking" IN (?, ?, ?) AND ("age" IN (?, ?, ?) OR "email" IN (?)) AND "email" IN (?) LIMIT ? OFFSET ?'
     );
     expect(values).toEqual([
       10,
@@ -53,6 +64,8 @@ describe("Tests in operator", () => {
       80,
       "john@doe.com",
       "john@doe.com",
+      200,
+      0,
     ]);
   });
 
