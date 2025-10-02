@@ -5,7 +5,7 @@ describe("Tests ew operator", () => {
     const { sql, values } = where().and("name", "ew", "john").build();
 
     expect(sql).toBe(`1 = 1 AND upper("name") LIKE upper(?) LIMIT ? OFFSET ?`);
-    expect(values).toEqual(["%john", 200, 0]);
+    expect(values).toEqual(["%john", 201, 0]);
   });
 
   test("Multiple ew condition on the same condition", () => {
@@ -17,7 +17,7 @@ describe("Tests ew operator", () => {
     expect(sql).toBe(
       '1 = 1 AND upper("name") LIKE upper(?) AND upper("email") LIKE upper(?) LIMIT ? OFFSET ?'
     );
-    expect(values).toEqual(["%john", "%john@d", 200, 0]);
+    expect(values).toEqual(["%john", "%john@d", 201, 0]);
   });
 
   test("Test ew or conditions", () => {
@@ -30,7 +30,7 @@ describe("Tests ew operator", () => {
     expect(sql).toBe(
       '1 = 1 AND (upper("name") LIKE upper(?) OR upper("name") LIKE upper(?)) LIMIT ? OFFSET ?'
     );
-    expect(values).toEqual(["%john", "%doe", 200, 0]);
+    expect(values).toEqual(["%john", "%doe", 201, 0]);
   });
 
   test("Tests or and and eq conditions on the same search", () => {
@@ -45,7 +45,7 @@ describe("Tests ew operator", () => {
     expect(sql).toBe(
       '1 = 1 AND upper("age") LIKE upper(?) AND (upper("name") LIKE upper(?) OR upper("name") LIKE upper(?)) AND upper("email") LIKE upper(?) LIMIT ? OFFSET ?'
     );
-    expect(values).toEqual(["%32", "%john", "%doe", "%john@doe", 200, 0]);
+    expect(values).toEqual(["%32", "%john", "%doe", "%john@doe", 201, 0]);
   });
 
   test("Error on pass array as value", () => {

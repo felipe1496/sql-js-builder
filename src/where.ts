@@ -7,7 +7,7 @@ export function where(str?: string): Where {
     return parseStringToWhere(str);
   }
   let _page = 1;
-  let _perPage = 200;
+  let _perPage = 201;
   const conds: (Condition | Condition[])[] = [];
 
   function and(field: string, operator: Operator, value: any) {

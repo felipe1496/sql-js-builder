@@ -5,7 +5,7 @@ describe("Tests gt operator", () => {
     const { sql, values } = where().and("age", "gt", 40).build();
 
     expect(sql).toBe('1 = 1 AND "age" > ? LIMIT ? OFFSET ?');
-    expect(values).toEqual([40, 200, 0]);
+    expect(values).toEqual([40, 201, 0]);
   });
 
   test("Multiple gt condition on the same condition", () => {
@@ -18,7 +18,7 @@ describe("Tests gt operator", () => {
     expect(sql).toBe(
       '1 = 1 AND "age" > ? AND "accounts" > ? AND "ranking" > ? LIMIT ? OFFSET ?'
     );
-    expect(values).toEqual([23, 3, 10, 200, 0]);
+    expect(values).toEqual([23, 3, 10, 201, 0]);
   });
 
   test("Test gt or conditions", () => {
@@ -31,7 +31,7 @@ describe("Tests gt operator", () => {
     expect(sql).toBe(
       '1 = 1 AND ("age" > ? OR "accounts" > ?) LIMIT ? OFFSET ?'
     );
-    expect(values).toEqual([23, 3, 200, 0]);
+    expect(values).toEqual([23, 3, 201, 0]);
   });
 
   test("Tests or and ne and conditions on the same search", () => {
@@ -46,7 +46,7 @@ describe("Tests gt operator", () => {
     expect(sql).toBe(
       '1 = 1 AND "ranking" > ? AND ("age" > ? OR "accounts" > ?) AND "email" > ? LIMIT ? OFFSET ?'
     );
-    expect(values).toEqual([10, 23, 3, "a", 200, 0]);
+    expect(values).toEqual([10, 23, 3, "a", 201, 0]);
   });
 
   test("Error on pass array as value", () => {
@@ -73,6 +73,6 @@ describe("Tests gt operator", () => {
     const { sql, values } = where().and("age", "gt", 3).build();
 
     expect(sql).toBe('1 = 1 AND "age" > ? LIMIT ? OFFSET ?');
-    expect(values).toEqual([3, 200, 0]);
+    expect(values).toEqual([3, 201, 0]);
   });
 });

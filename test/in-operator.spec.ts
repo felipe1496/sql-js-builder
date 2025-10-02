@@ -5,7 +5,7 @@ describe("Tests in operator", () => {
     const { sql, values } = where().and("age", "in", [40, 32, 80]).build();
 
     expect(sql).toBe('1 = 1 AND "age" IN (?, ?, ?) LIMIT ? OFFSET ?');
-    expect(values).toEqual([40, 32, 80, 200, 0]);
+    expect(values).toEqual([40, 32, 80, 201, 0]);
   });
 
   test("Multiple in condition on the same condition", () => {
@@ -25,7 +25,7 @@ describe("Tests in operator", () => {
       "john@doe.com",
       "gold",
       "silver",
-      200,
+      201,
       0,
     ]);
   });
@@ -40,7 +40,7 @@ describe("Tests in operator", () => {
     expect(sql).toBe(
       '1 = 1 AND ("age" IN (?, ?, ?) OR "email" IN (?)) LIMIT ? OFFSET ?'
     );
-    expect(values).toEqual([40, 32, 80, "john@doe.com", 200, 0]);
+    expect(values).toEqual([40, 32, 80, "john@doe.com", 201, 0]);
   });
 
   test("Tests or and in and conditions on the same search", () => {
@@ -64,7 +64,7 @@ describe("Tests in operator", () => {
       80,
       "john@doe.com",
       "john@doe.com",
-      200,
+      201,
       0,
     ]);
   });

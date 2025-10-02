@@ -5,7 +5,7 @@ describe("Tests not in operator", () => {
     const { sql, values } = where().and("age", "nin", [40, 32, 80]).build();
 
     expect(sql).toBe('1 = 1 AND "age" NOT IN (?, ?, ?) LIMIT ? OFFSET ?');
-    expect(values).toEqual([40, 32, 80, 200, 0]);
+    expect(values).toEqual([40, 32, 80, 201, 0]);
   });
 
   test("Multiple not in condition on the same condition", () => {
@@ -25,7 +25,7 @@ describe("Tests not in operator", () => {
       "john@doe.com",
       "gold",
       "silver",
-      200,
+      201,
       0,
     ]);
   });
@@ -40,7 +40,7 @@ describe("Tests not in operator", () => {
     expect(sql).toBe(
       '1 = 1 AND ("age" NOT IN (?, ?, ?) OR "email" NOT IN (?)) LIMIT ? OFFSET ?'
     );
-    expect(values).toEqual([40, 32, 80, "john@doe.com", 200, 0]);
+    expect(values).toEqual([40, 32, 80, "john@doe.com", 201, 0]);
   });
 
   test("Tests or and not in and conditions on the same search", () => {
@@ -64,7 +64,7 @@ describe("Tests not in operator", () => {
       80,
       "john@doe.com",
       "john@doe.com",
-      200,
+      201,
       0,
     ]);
   });

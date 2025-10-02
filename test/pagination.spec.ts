@@ -5,7 +5,7 @@ describe("Tests pagination (page and perPage)", () => {
     const { sql, values } = where().and("name", "eq", "john").build();
 
     expect(sql).toBe('1 = 1 AND "name" = ? LIMIT ? OFFSET ?');
-    expect(values).toEqual(["john", 200, 0]); // default: perPage = 200, page = 1
+    expect(values).toEqual(["john", 201, 0]); // default: perPage = 200, page = 1
   });
 
   test("Custom perPage only", () => {
@@ -22,8 +22,8 @@ describe("Tests pagination (page and perPage)", () => {
     const { sql, values } = where().page(3).and("name", "eq", "john").build();
 
     expect(sql).toBe('1 = 1 AND "name" = ? LIMIT ? OFFSET ?');
-    // page 3, perPage default 200 -> offset = (3 - 1) * 200 = 400
-    expect(values).toEqual(["john", 200, 400]);
+    // page 3, perPage default 201 -> offset = (3 - 1) * 200 = 400
+    expect(values).toEqual(["john", 201, 402]);
   });
 
   test("Custom page and perPage", () => {

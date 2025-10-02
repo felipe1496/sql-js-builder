@@ -5,7 +5,7 @@ describe("Tests ne operator", () => {
     const { sql, values } = where().and("name", "ne", "john").build();
 
     expect(sql).toBe('1 = 1 AND "name" != ? LIMIT ? OFFSET ?');
-    expect(values).toEqual(["john", 200, 0]);
+    expect(values).toEqual(["john", 201, 0]);
   });
 
   test("Multiple ne condition on the same condition", () => {
@@ -18,7 +18,7 @@ describe("Tests ne operator", () => {
     expect(sql).toBe(
       '1 = 1 AND "name" != ? AND "email" != ? AND "age" != ? LIMIT ? OFFSET ?'
     );
-    expect(values).toEqual(["john", "john@doe.com", 23, 200, 0]);
+    expect(values).toEqual(["john", "john@doe.com", 23, 201, 0]);
   });
 
   test("Test ne or conditions", () => {
@@ -29,7 +29,7 @@ describe("Tests ne operator", () => {
       ])
       .build();
     expect(sql).toBe('1 = 1 AND ("name" != ? OR "name" != ?) LIMIT ? OFFSET ?');
-    expect(values).toEqual(["john", "doe", 200, 0]);
+    expect(values).toEqual(["john", "doe", 201, 0]);
   });
 
   test("Tests or and ne and conditions on the same search", () => {
@@ -44,7 +44,7 @@ describe("Tests ne operator", () => {
     expect(sql).toBe(
       '1 = 1 AND "age" != ? AND ("name" != ? OR "name" != ?) AND "email" != ? LIMIT ? OFFSET ?'
     );
-    expect(values).toEqual([32, "john", "doe", "john@doe.com", 200, 0]);
+    expect(values).toEqual([32, "john", "doe", "john@doe.com", 201, 0]);
   });
 
   test("Error on pass array as value", () => {
@@ -71,6 +71,6 @@ describe("Tests ne operator", () => {
     const { sql, values } = where().and("name", "ne", 3).build();
 
     expect(sql).toBe('1 = 1 AND "name" != ? LIMIT ? OFFSET ?');
-    expect(values).toEqual([3, 200, 0]);
+    expect(values).toEqual([3, 201, 0]);
   });
 });
