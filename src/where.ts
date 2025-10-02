@@ -6,8 +6,8 @@ export function where(str?: string): Where {
   if (str) {
     return parseStringToWhere(str);
   }
-  let _page = 1;
-  let _perPage = 201;
+  let pageValue = 1;
+  let perPageValue = 201;
   const conds: (Condition | Condition[])[] = [];
 
   function and(field: string, operator: Operator, value: any) {
@@ -18,6 +18,8 @@ export function where(str?: string): Where {
       build,
       page,
       perPage,
+      pageValue,
+      perPageValue,
     };
   }
 
@@ -33,6 +35,8 @@ export function where(str?: string): Where {
       build,
       page,
       perPage,
+      pageValue,
+      perPageValue,
     };
   }
 
@@ -40,13 +44,15 @@ export function where(str?: string): Where {
     if (newPage <= 0) {
       throw new Error("Page must be greater than 0");
     }
-    _page = newPage;
+    pageValue = newPage;
     return {
       and,
       or,
       build,
       page,
       perPage,
+      pageValue,
+      perPageValue,
     };
   }
 
@@ -54,13 +60,15 @@ export function where(str?: string): Where {
     if (newPerPage <= 0) {
       throw new Error("PerPage must be greater than 0");
     }
-    _perPage = newPerPage;
+    perPageValue = newPerPage;
     return {
       and,
       or,
       build,
       page,
       perPage,
+      pageValue,
+      perPageValue,
     };
   }
 
@@ -87,8 +95,8 @@ export function where(str?: string): Where {
       sql,
       values: [
         ...parsed.map((p) => p.value).flat(Infinity),
-        _perPage,
-        (_page - 1) * _perPage,
+        perPageValue,
+        (pageValue - 1) * perPageValue,
       ],
     };
   }
@@ -99,5 +107,7 @@ export function where(str?: string): Where {
     build,
     page,
     perPage,
+    pageValue,
+    perPageValue,
   };
 }

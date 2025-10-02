@@ -8,4 +8,6 @@ export type Where = {
   build: () => { sql: string; values: any[] };
   page: (page: number) => Where;
   perPage: (perPage: number) => Where;
+  pageValue: number;
+  perPageValue: number;
 };
