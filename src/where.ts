@@ -6,8 +6,8 @@ export function where(str?: string): Where {
   if (str) {
     return parseStringToWhere(str);
   }
-  let pageValue = 1;
-  let perPageValue = 201;
+  let limitValue = 201;
+  let offsetValue = 0;
   const conds: (Condition | Condition[])[] = [];
 
   function and(field: string, operator: Operator, value: any) {
@@ -16,10 +16,10 @@ export function where(str?: string): Where {
       and,
       or,
       build,
-      page,
-      perPage,
-      pageValue,
-      perPageValue,
+      limit,
+      offset,
+      limitValue,
+      offsetValue,
     };
   }
 
@@ -33,42 +33,42 @@ export function where(str?: string): Where {
       and,
       or,
       build,
-      page,
-      perPage,
-      pageValue,
-      perPageValue,
+      limit,
+      offset,
+      limitValue,
+      offsetValue,
     };
   }
 
-  function page(newPage: number) {
-    if (newPage <= 0) {
+  function limit(newLimit: number) {
+    if (newLimit < 0) {
       throw new Error("Page must be greater than 0");
     }
-    pageValue = newPage;
+    limitValue = newLimit;
     return {
       and,
       or,
       build,
-      page,
-      perPage,
-      pageValue,
-      perPageValue,
+      limit,
+      offset,
+      limitValue,
+      offsetValue,
     };
   }
 
-  function perPage(newPerPage: number) {
-    if (newPerPage <= 0) {
+  function offset(newOffset: number) {
+    if (newOffset <= 0) {
       throw new Error("PerPage must be greater than 0");
     }
-    perPageValue = newPerPage;
+    offsetValue = newOffset;
     return {
       and,
       or,
       build,
-      page,
-      perPage,
-      pageValue,
-      perPageValue,
+      limit,
+      offset,
+      limitValue,
+      offsetValue,
     };
   }
 
@@ -95,8 +95,8 @@ export function where(str?: string): Where {
       sql,
       values: [
         ...parsed.map((p) => p.value).flat(Infinity),
-        perPageValue,
-        (pageValue - 1) * perPageValue,
+        limitValue,
+        offsetValue,
       ],
     };
   }
@@ -105,9 +105,9 @@ export function where(str?: string): Where {
     and,
     or,
     build,
-    page,
-    perPage,
-    pageValue,
-    perPageValue,
+    limit,
+    offset,
+    limitValue,
+    offsetValue,
   };
 }
