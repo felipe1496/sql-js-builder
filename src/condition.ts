@@ -1,5 +1,6 @@
 import { operators } from "./constants";
 import { Operator } from "./types";
+import { replace } from "./utils";
 
 export type Condition = {
   field: string;
@@ -69,16 +70,19 @@ function getSqlPlaceholder(op: Operator, value: any) {
   }
 }
 
-function getField(field: string, op: Operator) {
+function getField(
+  field: string,
+  op: Operator,
+  fieldReplacements: Record<string, string> = {}
+) {
   switch (op) {
     case "like":
     case "nlike":
     case "sw":
     case "ew":
-      return `upper("${field}")`;
-
+      return `upper("${replace(field, fieldReplacements)}")`;
     default:
-      return `"${field}"`;
+      return `"${replace(field, fieldReplacements)}"`;
   }
 }
 
@@ -111,8 +115,11 @@ export function createCondition(
   };
 }
 
-export function parseConditionSQL({ field, operator, value }: Condition) {
-  const sql = `${getField(field, operator)} ${
+export function parseConditionSQL(
+  { field, operator, value }: Condition,
+  fieldReplacements: Record<string, string> = {}
+) {
+  const sql = `${getField(field, operator, fieldReplacements)} ${
     operators[operator]
   } ${getSqlPlaceholder(operator, value)}`;
 

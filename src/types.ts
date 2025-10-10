@@ -10,4 +10,5 @@ export type Where = {
   offset: (newOffsetValue: number) => Where;
   limitValue: number;
   offsetValue: number;
+  replaceField: (field: string, newField: string) => Where;
 };

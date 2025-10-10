@@ -4,3 +4,14 @@ export function escapeStr(str: string): string {
   }
   return str;
 }
+
+export function replace(
+  str: string,
+  fieldReplacements: Record<string, string>
+) {
+  let newStr = `${str}`;
+  Object.entries(fieldReplacements).forEach(([key, value]) => {
+    newStr = newStr.replace(key, value);
+  });
+  return newStr;
+}
