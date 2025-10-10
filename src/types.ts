@@ -12,4 +12,5 @@ export type Where = {
   offsetValue: number;
   replaceField: (field: string, newField: string) => Where;
   orderBy: (field: string, order: "asc" | "desc") => Where;
+  removeFilter: (field: string) => Where;
 };

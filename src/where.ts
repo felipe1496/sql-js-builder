@@ -11,6 +11,7 @@ export function where(str?: string): Where {
   const conds: (Condition | Condition[])[] = [];
   const fieldReplacements: Record<string, string> = {};
   const orderByValues: Record<string, "asc" | "desc"> = {};
+  const removeFilters: string[] = [];
 
   function orderBy(field: string, order: "asc" | "desc") {
     orderByValues[field] = order;
@@ -24,6 +25,7 @@ export function where(str?: string): Where {
       offsetValue,
       replaceField,
       orderBy,
+      removeFilter,
     };
   }
 
@@ -39,6 +41,7 @@ export function where(str?: string): Where {
       offsetValue,
       replaceField,
       orderBy,
+      removeFilter,
     };
   }
 
@@ -58,6 +61,7 @@ export function where(str?: string): Where {
       offsetValue,
       replaceField,
       orderBy,
+      removeFilter,
     };
   }
 
@@ -76,6 +80,7 @@ export function where(str?: string): Where {
       offsetValue,
       replaceField,
       orderBy,
+      removeFilter,
     };
   }
 
@@ -94,6 +99,7 @@ export function where(str?: string): Where {
       offsetValue,
       replaceField,
       orderBy,
+      removeFilter,
     };
   }
 
@@ -109,27 +115,52 @@ export function where(str?: string): Where {
       offsetValue,
       replaceField,
       orderBy,
+      removeFilter,
+    };
+  }
+
+  function removeFilter(field: string) {
+    removeFilters.push(field);
+    return {
+      and,
+      or,
+      build,
+      limit,
+      offset,
+      limitValue,
+      offsetValue,
+      replaceField,
+      orderBy,
+      removeFilter,
     };
   }
 
   function build() {
     const parsed = conds.map((c) => {
       if (Array.isArray(c)) {
-        const orConditions = c.map((orCond) =>
-          parseConditionSQL(orCond, fieldReplacements)
-        );
+        const orConditions = c
+          .filter((orCond) => !removeFilters.includes(orCond.field))
+          .map((orCond) => parseConditionSQL(orCond, fieldReplacements));
 
-        return {
-          sql: `(${orConditions.map((orCond) => orCond.sql).join(" OR ")})`,
-          value: orConditions.map((orCond) => orCond.value),
-        };
+        if (orConditions.length) {
+          return {
+            sql: `(${orConditions.map((orCond) => orCond.sql).join(" OR ")})`,
+            value: orConditions.map((orCond) => orCond.value),
+          };
+        }
       } else {
-        return parseConditionSQL(c, fieldReplacements);
+        if (!removeFilters.includes(c.field)) {
+          return parseConditionSQL(c, fieldReplacements);
+        }
       }
     });
     let sql = "1 = 1";
-    if (parsed.length) {
-      sql += ` AND ${parsed.map((p) => p.sql).join(" AND ")}`;
+    const nonUndefinedParsed = parsed.filter(Boolean) as {
+      sql: string;
+      value: any;
+    }[];
+    if (nonUndefinedParsed.length) {
+      sql += ` AND ${nonUndefinedParsed.map((p) => p.sql).join(" AND ")}`;
     }
     sql += ` LIMIT ? OFFSET ?`;
 
@@ -142,7 +173,7 @@ export function where(str?: string): Where {
     return {
       sql,
       values: [
-        ...parsed.map((p) => p.value).flat(Infinity),
+        ...nonUndefinedParsed.map((p) => p.value).flat(Infinity),
         limitValue,
         offsetValue,
       ],
@@ -159,5 +190,6 @@ export function where(str?: string): Where {
     offsetValue,
     replaceField,
     orderBy,
+    removeFilter,
   };
 }
