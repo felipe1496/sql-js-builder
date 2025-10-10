@@ -11,4 +11,5 @@ export type Where = {
   limitValue: number;
   offsetValue: number;
   replaceField: (field: string, newField: string) => Where;
+  orderBy: (field: string, order: "asc" | "desc") => Where;
 };

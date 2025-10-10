@@ -10,6 +10,22 @@ export function where(str?: string): Where {
   let offsetValue = 0;
   const conds: (Condition | Condition[])[] = [];
   const fieldReplacements: Record<string, string> = {};
+  const orderByValues: Record<string, "asc" | "desc"> = {};
+
+  function orderBy(field: string, order: "asc" | "desc") {
+    orderByValues[field] = order;
+    return {
+      and,
+      or,
+      build,
+      limit,
+      offset,
+      limitValue,
+      offsetValue,
+      replaceField,
+      orderBy,
+    };
+  }
 
   function and(field: string, operator: Operator, value: any) {
     conds.push(createCondition(field, operator, value));
@@ -22,6 +38,7 @@ export function where(str?: string): Where {
       limitValue,
       offsetValue,
       replaceField,
+      orderBy,
     };
   }
 
@@ -40,6 +57,7 @@ export function where(str?: string): Where {
       limitValue,
       offsetValue,
       replaceField,
+      orderBy,
     };
   }
 
@@ -57,6 +75,7 @@ export function where(str?: string): Where {
       limitValue,
       offsetValue,
       replaceField,
+      orderBy,
     };
   }
 
@@ -74,6 +93,7 @@ export function where(str?: string): Where {
       limitValue,
       offsetValue,
       replaceField,
+      orderBy,
     };
   }
 
@@ -88,6 +108,7 @@ export function where(str?: string): Where {
       limitValue,
       offsetValue,
       replaceField,
+      orderBy,
     };
   }
 
@@ -112,6 +133,12 @@ export function where(str?: string): Where {
     }
     sql += ` LIMIT ? OFFSET ?`;
 
+    if (Object.keys(orderByValues).length) {
+      sql += ` ORDER BY ${Object.entries(orderByValues)
+        .map(([field, order]) => `${field} ${order}`)
+        .join(", ")}`;
+    }
+
     return {
       sql,
       values: [
@@ -131,5 +158,6 @@ export function where(str?: string): Where {
     limitValue,
     offsetValue,
     replaceField,
+    orderBy,
   };
 }
