@@ -1,9 +1,9 @@
 import { where } from "../src";
 
-describe("Tests replaceField functionality", () => {
+describe("Tests replace functionality", () => {
   test("Should replace a single field in an AND condition", () => {
     const { sql, values } = where()
-      .replaceField("name", "user_name")
+      .replace("name", "user_name")
       .and("name", "eq", "john")
       .build();
 
@@ -13,8 +13,8 @@ describe("Tests replaceField functionality", () => {
 
   test("Should replace multiple fields in different AND conditions", () => {
     const { sql, values } = where()
-      .replaceField("name", "user_name")
-      .replaceField("email", "user_email")
+      .replace("name", "user_name")
+      .replace("email", "user_email")
       .and("name", "eq", "john")
       .and("email", "eq", "john@doe.com")
       .and("age", "eq", 25)
@@ -28,7 +28,7 @@ describe("Tests replaceField functionality", () => {
 
   test("Should replace field names inside OR conditions", () => {
     const { sql, values } = where()
-      .replaceField("name", "full_name")
+      .replace("name", "full_name")
       .or([
         ["name", "eq", "john"],
         ["name", "eq", "doe"],
@@ -43,7 +43,7 @@ describe("Tests replaceField functionality", () => {
 
   test("Should replace some fields and keep others untouched", () => {
     const { sql, values } = where()
-      .replaceField("email", "contact_email")
+      .replace("email", "contact_email")
       .and("name", "eq", "john")
       .and("email", "eq", "john@doe.com")
       .build();
@@ -54,20 +54,20 @@ describe("Tests replaceField functionality", () => {
     expect(values).toEqual(["john", "john@doe.com", 201, 0]);
   });
 
-  test("Should work when replaceField is called after and/or conditions", () => {
+  test("Should work when replace is called after and/or conditions", () => {
     const { sql, values } = where()
       .and("name", "eq", "john")
-      .replaceField("name", "user_name")
+      .replace("name", "user_name")
       .build();
 
     expect(sql).toBe('1 = 1 AND "user_name" = ? LIMIT ? OFFSET ?');
     expect(values).toEqual(["john", 201, 0]);
   });
 
-  test("Should handle multiple replaceField calls on the same key (latest wins)", () => {
+  test("Should handle multiple replace calls on the same key (latest wins)", () => {
     const { sql, values } = where()
-      .replaceField("name", "user_name")
-      .replaceField("name", "profile_name")
+      .replace("name", "user_name")
+      .replace("name", "profile_name")
       .and("name", "eq", "john")
       .build();
 
@@ -75,10 +75,10 @@ describe("Tests replaceField functionality", () => {
     expect(values).toEqual(["john", 201, 0]);
   });
 
-  test("Should apply replaceField in both AND and OR combined conditions", () => {
+  test("Should apply replace in both AND and OR combined conditions", () => {
     const { sql, values } = where()
-      .replaceField("name", "full_name")
-      .replaceField("email", "user_email")
+      .replace("name", "full_name")
+      .replace("email", "user_email")
       .and("email", "eq", "john@doe.com")
       .or([
         ["name", "eq", "john"],
@@ -92,9 +92,9 @@ describe("Tests replaceField functionality", () => {
     expect(values).toEqual(["john@doe.com", "john", "doe", 201, 0]);
   });
 
-  test("Should ignore replaceField when field is not used in any condition", () => {
+  test("Should ignore replace when field is not used in any condition", () => {
     const { sql, values } = where()
-      .replaceField("unused_field", "new_unused_field")
+      .replace("unused_field", "new_unused_field")
       .and("name", "eq", "john")
       .build();
 

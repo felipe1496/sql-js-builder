@@ -1,18 +1,18 @@
 import { where } from "../src";
 
-describe("Tests removeFilter functionality", () => {
+describe("Tests remove functionality", () => {
   test("Should remove a single AND condition", () => {
     const { sql, values } = where()
       .and("name", "eq", "john")
       .and("age", "eq", 30)
-      .removeFilter("age")
+      .remove("age")
       .build();
 
     expect(sql).toBe('1 = 1 AND "name" = ? LIMIT ? OFFSET ?');
     expect(values).toEqual(["john", 201, 0]);
   });
 
-  test("Should remove all OR conditions matching removeFilter", () => {
+  test("Should remove all OR conditions matching remove", () => {
     const { sql, values } = where()
       .or([
         ["status", "eq", "active"],
@@ -22,7 +22,7 @@ describe("Tests removeFilter functionality", () => {
         ["role", "eq", "admin"],
         ["role", "eq", "user"],
       ])
-      .removeFilter("status")
+      .remove("status")
       .build();
 
     expect(sql).toBe('1 = 1 AND ("role" = ? OR "role" = ?) LIMIT ? OFFSET ?');
@@ -37,8 +37,8 @@ describe("Tests removeFilter functionality", () => {
         ["status", "eq", "active"],
         ["role", "eq", "admin"],
       ])
-      .removeFilter("age")
-      .removeFilter("status")
+      .remove("age")
+      .remove("status")
       .build();
 
     expect(sql).toBe('1 = 1 AND "name" = ? AND ("role" = ?) LIMIT ? OFFSET ?');
@@ -48,30 +48,30 @@ describe("Tests removeFilter functionality", () => {
   test("Should not remove any condition if field does not exist", () => {
     const { sql, values } = where()
       .and("name", "eq", "john")
-      .removeFilter("nonexistent")
+      .remove("nonexistent")
       .build();
 
     expect(sql).toBe('1 = 1 AND "name" = ? LIMIT ? OFFSET ?');
     expect(values).toEqual(["john", 201, 0]);
   });
 
-  test("Should work correctly with replaceField and removeFilter combined", () => {
+  test("Should work correctly with replace and remove combined", () => {
     const { sql, values } = where()
       .and("created_at", "eq", "2025-10-10")
-      .replaceField("created_at", "creation_date")
-      .removeFilter("created_at")
+      .replace("created_at", "creation_date")
+      .remove("created_at")
       .build();
 
     expect(sql).toBe("1 = 1 LIMIT ? OFFSET ?");
     expect(values).toEqual([201, 0]);
   });
 
-  test("Should work correctly with orderBy and removeFilter", () => {
+  test("Should work correctly with orderBy and remove", () => {
     const { sql, values } = where()
       .and("name", "eq", "john")
       .and("age", "eq", 30)
       .orderBy("age", "desc")
-      .removeFilter("age")
+      .remove("age")
       .build();
 
     expect(sql).toBe('1 = 1 AND "name" = ? LIMIT ? OFFSET ? ORDER BY age desc');
@@ -84,7 +84,7 @@ describe("Tests removeFilter functionality", () => {
         ["status", "eq", "active"],
         ["status", "eq", "pending"],
       ])
-      .removeFilter("status")
+      .remove("status")
       .build();
 
     expect(sql).toBe("1 = 1 LIMIT ? OFFSET ?");
@@ -92,13 +92,13 @@ describe("Tests removeFilter functionality", () => {
   });
 });
 
-describe("removeFilter edge cases", () => {
+describe("remove edge cases", () => {
   test("Removing all fields results in SQL with only 1=1", () => {
     const { sql, values } = where()
       .and("name", "eq", "john")
       .and("age", "eq", 30)
-      .removeFilter("name")
-      .removeFilter("age")
+      .remove("name")
+      .remove("age")
       .build();
 
     expect(sql).toBe("1 = 1 LIMIT ? OFFSET ?");
@@ -111,7 +111,7 @@ describe("removeFilter edge cases", () => {
         ["status", "eq", "active"],
         ["status", "eq", "pending"],
       ])
-      .removeFilter("status")
+      .remove("status")
       .build();
 
     expect(sql).toBe("1 = 1 LIMIT ? OFFSET ?");
@@ -125,9 +125,9 @@ describe("removeFilter edge cases", () => {
         ["status", "eq", "active"],
         ["role", "eq", "admin"],
       ])
-      .removeFilter("name")
-      .removeFilter("status")
-      .removeFilter("role")
+      .remove("name")
+      .remove("status")
+      .remove("role")
       .build();
 
     expect(sql).toBe("1 = 1 LIMIT ? OFFSET ?");

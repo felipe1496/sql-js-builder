@@ -10,7 +10,8 @@ export type Where = {
   offset: (newOffsetValue: number) => Where;
   limitValue: number;
   offsetValue: number;
-  replaceField: (field: string, newField: string) => Where;
+  replace: (field: string, newField: string) => Where;
   orderBy: (field: string, order: "asc" | "desc") => Where;
-  removeFilter: (field: string) => Where;
+  remove: (field: string) => Where;
+  exists: (field: string) => boolean;
 };

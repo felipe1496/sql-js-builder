@@ -56,13 +56,13 @@ describe("Tests orderBy functionality", () => {
     expect(values).toEqual(["john", "doe", 201, 0]);
   });
 
-  test("Should apply replaceField before orderBy rendering", () => {
+  test("Should apply replace before orderBy rendering", () => {
     const { sql, values } = where()
-      .replaceField("created_at", "creation_date")
+      .replace("created_at", "creation_date")
       .orderBy("created_at", "desc")
       .build();
 
-    // orderBy não deve ser afetado, pois replaceField afeta apenas condições,
+    // orderBy não deve ser afetado, pois replace afeta apenas condições,
     // não campos estáticos do ORDER BY
     expect(sql).toBe("1 = 1 LIMIT ? OFFSET ? ORDER BY created_at desc");
     expect(values).toEqual([201, 0]);

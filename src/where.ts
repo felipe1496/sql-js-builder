@@ -23,9 +23,10 @@ export function where(str?: string): Where {
       offset,
       limitValue,
       offsetValue,
-      replaceField,
+      replace,
       orderBy,
-      removeFilter,
+      remove,
+      exists,
     };
   }
 
@@ -39,9 +40,10 @@ export function where(str?: string): Where {
       offset,
       limitValue,
       offsetValue,
-      replaceField,
+      replace,
       orderBy,
-      removeFilter,
+      remove,
+      exists,
     };
   }
 
@@ -59,9 +61,10 @@ export function where(str?: string): Where {
       offset,
       limitValue,
       offsetValue,
-      replaceField,
+      replace,
       orderBy,
-      removeFilter,
+      remove,
+      exists,
     };
   }
 
@@ -78,9 +81,10 @@ export function where(str?: string): Where {
       offset,
       limitValue,
       offsetValue,
-      replaceField,
+      replace,
       orderBy,
-      removeFilter,
+      remove,
+      exists,
     };
   }
 
@@ -97,13 +101,14 @@ export function where(str?: string): Where {
       offset,
       limitValue,
       offsetValue,
-      replaceField,
+      replace,
       orderBy,
-      removeFilter,
+      remove,
+      exists,
     };
   }
 
-  function replaceField(field: string, newField: string) {
+  function replace(field: string, newField: string) {
     fieldReplacements[field] = newField;
     return {
       and,
@@ -113,13 +118,14 @@ export function where(str?: string): Where {
       offset,
       limitValue,
       offsetValue,
-      replaceField,
+      replace,
       orderBy,
-      removeFilter,
+      remove,
+      exists,
     };
   }
 
-  function removeFilter(field: string) {
+  function remove(field: string) {
     removeFilters.push(field);
     return {
       and,
@@ -129,10 +135,20 @@ export function where(str?: string): Where {
       offset,
       limitValue,
       offsetValue,
-      replaceField,
+      replace,
       orderBy,
-      removeFilter,
+      remove,
+      exists,
     };
+  }
+
+  function exists(field: string) {
+    return conds.some((cond) => {
+      if (Array.isArray(cond)) {
+        return cond.some((c) => c.field === field);
+      }
+      return cond.field === field;
+    });
   }
 
   function build() {
@@ -188,8 +204,9 @@ export function where(str?: string): Where {
     offset,
     limitValue,
     offsetValue,
-    replaceField,
+    replace,
     orderBy,
-    removeFilter,
+    remove,
+    exists,
   };
 }
