@@ -8,7 +8,7 @@ describe("Tests orderBy functionality", () => {
       .build();
 
     expect(sql).toBe(
-      '1 = 1 AND "name" = ? LIMIT ? OFFSET ? ORDER BY "name" asc'
+      '1 = 1 AND "name" = ? ORDER BY "name" asc LIMIT ? OFFSET ?'
     );
     expect(values).toEqual(["john", 201, 0]);
   });
@@ -20,7 +20,7 @@ describe("Tests orderBy functionality", () => {
       .build();
 
     expect(sql).toBe(
-      '1 = 1 AND "age" = ? LIMIT ? OFFSET ? ORDER BY "age" desc'
+      '1 = 1 AND "age" = ? ORDER BY "age" desc LIMIT ? OFFSET ?'
     );
     expect(values).toEqual([25, 201, 0]);
   });
@@ -33,7 +33,7 @@ describe("Tests orderBy functionality", () => {
       .build();
 
     expect(sql).toBe(
-      '1 = 1 AND "active" = ? LIMIT ? OFFSET ? ORDER BY "name" asc, "created_at" desc'
+      '1 = 1 AND "active" = ? ORDER BY "name" asc, "created_at" desc LIMIT ? OFFSET ?'
     );
     expect(values).toEqual([1, 201, 0]);
   });
@@ -41,7 +41,7 @@ describe("Tests orderBy functionality", () => {
   test("Should include orderBy even if there are no conditions", () => {
     const { sql, values } = where().orderBy("created_at", "desc").build();
 
-    expect(sql).toBe('1 = 1 LIMIT ? OFFSET ? ORDER BY "created_at" desc');
+    expect(sql).toBe('1 = 1 ORDER BY "created_at" desc LIMIT ? OFFSET ?');
     expect(values).toEqual([201, 0]);
   });
 
@@ -55,7 +55,7 @@ describe("Tests orderBy functionality", () => {
       .build();
 
     expect(sql).toBe(
-      '1 = 1 AND ("name" = ? OR "name" = ?) LIMIT ? OFFSET ? ORDER BY "age" asc'
+      '1 = 1 AND ("name" = ? OR "name" = ?) ORDER BY "age" asc LIMIT ? OFFSET ?'
     );
     expect(values).toEqual(["john", "doe", 201, 0]);
   });
@@ -68,7 +68,7 @@ describe("Tests orderBy functionality", () => {
 
     // orderBy não deve ser afetado, pois replace afeta apenas condições,
     // não campos estáticos do ORDER BY
-    expect(sql).toBe('1 = 1 LIMIT ? OFFSET ? ORDER BY "created_at" desc');
+    expect(sql).toBe('1 = 1 ORDER BY "created_at" desc LIMIT ? OFFSET ?');
     expect(values).toEqual([201, 0]);
   });
 
@@ -81,7 +81,7 @@ describe("Tests orderBy functionality", () => {
       .build();
 
     expect(sql).toBe(
-      '1 = 1 AND "age" = ? LIMIT ? OFFSET ? ORDER BY "score" desc'
+      '1 = 1 AND "age" = ? ORDER BY "score" desc LIMIT ? OFFSET ?'
     );
     expect(values).toEqual([30, 5, 10]);
   });
@@ -92,7 +92,7 @@ describe("Tests orderBy functionality", () => {
       .orderBy("name", "desc") // deve sobrescrever o anterior
       .build();
 
-    expect(sql).toBe('1 = 1 LIMIT ? OFFSET ? ORDER BY "name" desc');
+    expect(sql).toBe('1 = 1 ORDER BY "name" desc LIMIT ? OFFSET ?');
     expect(values).toEqual([201, 0]);
   });
 
@@ -105,7 +105,7 @@ describe("Tests orderBy functionality", () => {
       .build();
 
     expect(sql).toBe(
-      '1 = 1 AND "name" = ? AND "email" = ? LIMIT ? OFFSET ? ORDER BY "age" desc, "created_at" asc'
+      '1 = 1 AND "name" = ? AND "email" = ? ORDER BY "age" desc, "created_at" asc LIMIT ? OFFSET ?'
     );
     expect(values).toEqual(["john", "john@doe.com", 201, 0]);
   });

@@ -196,13 +196,14 @@ export function where(str?: string): Where {
     if (nonUndefinedParsed.length) {
       sql += ` AND ${nonUndefinedParsed.map((p) => p.sql).join(" AND ")}`;
     }
-    sql += ` LIMIT ? OFFSET ?`;
 
     if (Object.keys(orderByValues).length) {
       sql += ` ORDER BY ${Object.entries(orderByValues)
         .map(([field, order]) => `"${field}" ${order}`)
         .join(", ")}`;
     }
+
+    sql += ` LIMIT ? OFFSET ?`;
 
     return {
       sql,
