@@ -1,3 +1,4 @@
+import { Condition } from "./condition";
 import { operators } from "./constants";
 
 export type Operator = keyof typeof operators;
@@ -13,5 +14,9 @@ export type Where = {
   replace: (field: string, newField: string) => Where;
   orderBy: (field: string, order: "asc" | "desc") => Where;
   remove: (field: string) => Where;
-  exists: (field: string) => boolean;
+  findConditions: (
+    field: string,
+    operator?: Operator[],
+    options?: { includeOrGroups?: boolean }
+  ) => Condition[];
 };

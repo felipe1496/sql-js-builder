@@ -26,7 +26,7 @@ export function where(str?: string): Where {
       replace,
       orderBy,
       remove,
-      exists,
+      findConditions,
     };
   }
 
@@ -43,7 +43,7 @@ export function where(str?: string): Where {
       replace,
       orderBy,
       remove,
-      exists,
+      findConditions,
     };
   }
 
@@ -64,7 +64,7 @@ export function where(str?: string): Where {
       replace,
       orderBy,
       remove,
-      exists,
+      findConditions,
     };
   }
 
@@ -84,7 +84,7 @@ export function where(str?: string): Where {
       replace,
       orderBy,
       remove,
-      exists,
+      findConditions,
     };
   }
 
@@ -104,7 +104,7 @@ export function where(str?: string): Where {
       replace,
       orderBy,
       remove,
-      exists,
+      findConditions,
     };
   }
 
@@ -121,7 +121,7 @@ export function where(str?: string): Where {
       replace,
       orderBy,
       remove,
-      exists,
+      findConditions,
     };
   }
 
@@ -138,16 +138,34 @@ export function where(str?: string): Where {
       replace,
       orderBy,
       remove,
-      exists,
+      findConditions,
     };
   }
 
-  function exists(field: string) {
-    return conds.some((cond) => {
+  function findConditions(
+    field: string,
+    operators?: Operator[] | undefined,
+    options?: { includeOrGroups?: boolean }
+  ): Condition[] {
+    const includeOrGroups = options?.includeOrGroups ?? false;
+
+    return conds.flatMap((cond) => {
       if (Array.isArray(cond)) {
-        return cond.some((c) => c.field === field);
+        if (!includeOrGroups) return [];
+        return cond.filter(
+          (c) =>
+            c.field === field &&
+            (!operators || operators.includes(c.operator as Operator))
+        );
+      } else {
+        if (
+          cond.field === field &&
+          (!operators || operators.includes(cond.operator as Operator))
+        ) {
+          return [cond];
+        }
+        return [];
       }
-      return cond.field === field;
     });
   }
 
@@ -207,6 +225,6 @@ export function where(str?: string): Where {
     replace,
     orderBy,
     remove,
-    exists,
+    findConditions,
   };
 }
