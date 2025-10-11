@@ -200,7 +200,7 @@ export function where(str?: string): Where {
 
     if (Object.keys(orderByValues).length) {
       sql += ` ORDER BY ${Object.entries(orderByValues)
-        .map(([field, order]) => `${field} ${order}`)
+        .map(([field, order]) => `"${field}" ${order}`)
         .join(", ")}`;
     }
 

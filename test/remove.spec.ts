@@ -74,7 +74,9 @@ describe("Tests remove functionality", () => {
       .remove("age")
       .build();
 
-    expect(sql).toBe('1 = 1 AND "name" = ? LIMIT ? OFFSET ? ORDER BY age desc');
+    expect(sql).toBe(
+      '1 = 1 AND "name" = ? LIMIT ? OFFSET ? ORDER BY "age" desc'
+    );
     expect(values).toEqual(["john", 201, 0]);
   });
 
